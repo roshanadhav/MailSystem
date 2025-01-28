@@ -1,0 +1,1 @@
+export const logo = "/Images/maillogo.png"
