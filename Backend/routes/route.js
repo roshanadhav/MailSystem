@@ -30,7 +30,7 @@ router.get('/isLogin' , (req , res) => {
 
 router.post('/api/signup' , signupUser )
 
-router.post('/api/signin' , passport.authenticate('user-local', { failureRedirect: 'http://localhost:5173/', failureFlash:true }) ,signinUser)
+router.post('/api/signin' , passport.authenticate('user-local', { failureRedirect: 'http://localhost:5173/' }) ,signinUser)
  
 
 export default router ;

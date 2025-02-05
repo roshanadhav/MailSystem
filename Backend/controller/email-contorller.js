@@ -101,5 +101,4 @@ export const signupUser = async(req,res)=>{
 export const signinUser  =  async (req,res)=>{
     req.session.user = req.user ;
     res.status(200).json("ok")
-     
-  }
+}

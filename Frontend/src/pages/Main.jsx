@@ -9,52 +9,48 @@ import LoginSignupDialog from "../components/LoginSignupDialog";
 const Main = () => {
     let [openDrawer, setOpenDrawer] = useState(true);
     let [showTab, setShowTab] = useState("inbox");
-    let [Login, setShowDialog] = useState(true);
+    let [isLogin, setIsLogin] = useState(false); // Renamed to lowercase for better practice
+    let [loading, setLoading] = useState(true);  // Show loading before checking login
 
-    const toggelDrawer = () => {
+    const toggleDrawer = () => {
         setOpenDrawer((prevState) => !prevState);
     };
 
     useEffect(() => {
         const getIsLogin = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/isLogin');
+                const response = await axios.get('http://localhost:8080/isLogin', { withCredentials: true });
+                
                 if (response.status === 200) {
-                    setShowDialog(false);
+                    setIsLogin(true);
                     localStorage.setItem('isLoggedIn', 'true');
                 } else {
-                    setShowDialog(true);
+                    setIsLogin(false);
                     localStorage.setItem('isLoggedIn', 'false');
                 }
             } catch (error) {
                 if (error.response && error.response.status === 401) {
-                    setShowDialog(true);
+                    setIsLogin(false);
                     localStorage.setItem('isLoggedIn', 'false');
                 } else {
                     console.error("Error checking login status:", error);
                 }
+            } finally {
+                setLoading(false);  // Hide loading after login check
             }
         };
 
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
-        const hasShownDialog = localStorage.getItem('hasShownDialog');
-
-        if (isLoggedIn === 'true') {
-            setShowDialog(false);
-        } else if (!hasShownDialog) {
-            getIsLogin();
-            localStorage.setItem('hasShownDialog', 'true');
-        } else {
-            setShowDialog(false);
-        }
+        getIsLogin();
     }, []);
+
+    if (loading) return <p>Loading...</p>; // Show loading message while checking login
 
     return (
         <div>
-            <LoginSignupDialog showDialog={Login} onClose={setShowDialog} />
-            {!Login && (
+            <LoginSignupDialog showDialog={!isLogin} onClose={() => setIsLogin(true)} />
+            {isLogin && (
                 <>
-                    <Header toggelDrawer={toggelDrawer} />
+                    <Header toggleDrawer={toggleDrawer} />
                     <Sidebar openDrawer={openDrawer} setShowTab={setShowTab} />
                     {showTab === SIDEBAR_DATA[0].name && <Email openDrawer={openDrawer} endpoint="inbox" />}
                     {showTab === SIDEBAR_DATA[1].name && <Email openDrawer={openDrawer} endpoint="stared" />}

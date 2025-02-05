@@ -2,16 +2,19 @@ import express from "express"
 const app = express() 
 import connection from "./databases/db.js"
 import router from "./routes/route.js";
-import cors from "cors"
+import cors from 'cors'
+import cookieParser from 'cookie-parser'
 import passport from "passport";
 import session from "express-session";
 import LocalStrategy from 'passport-local';
 import User from "./model/user.js";
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
 app.use(cors({
-    origin: 'http://localhost:5173', 
-    credentials: true,              
+    origin: 'http://localhost:5173',
+    credentials:true
 }));
 
 
